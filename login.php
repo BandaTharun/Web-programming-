@@ -39,97 +39,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // connecting to the DB
 include 'db_connect.php';
 
-// collecting form data using $_POST
+// collecting user email and passwoed  using $_POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-    // checking the form data
+    // checking the email and password are given are not 
     if (empty($email) || empty($password))  {
         //echo "The email and password is not filled out completely.";
     } else {
-      // checking if the eamil and password are exist in the database
+
+
+      // checking if the eamil and password  exist in the database 
+
+
         $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
         $result = mysqli_query($conn, $sql);
 
         if (mysqli_num_rows($result) > 0) {
+
+
+            // if this is true , it means that the user is having the accocunt the in the database
+
             //echo "Access granted.";
-            // inserting user email id into  the data base to know which user is using 
-            $useremail=$email;
+
+            //  to know who is the present user using the notebook 
+            // i want the user email to be stored in  table called activeusers table , and this help a find the 
+            // user table to retrive the old data and to upload new data
+
+
+            $activeuser=$email;
             $sql5 = "INSERT INTO activeusers (`Email`) 
-            VALUES ('$useremail')";
+            VALUES ('$activeuser')";
             mysqli_query($conn, $sql5);
+
+
+            // now i  want to know if the user is existing user or new user who just has been created the accocunt 
+            
+            // this condiction return if user data has been stored previously 
+
             $sql = "SELECT * FROM information_schema.tables WHERE table_schema = 'mydb8' AND table_name = '$email' ";  
-      
             $result = mysqli_query($conn, $sql);
             if (mysqli_num_rows($result) > 0) {
+
+              // if this condiction is true it means that the user is existing user 
                 echo "Table exists";
-                $form_data = array('email' => $email,'password' => $password );
 
-                
-
-
-
-                // Create a hidden form using JavaScript
-                   echo '<script>';
-                   echo 'var form = document.createElement("form");';
-                   echo 'form.style.display = "none";'; // Hide the form
-                   echo 'form.method = "post";';
-                   echo 'form.action = "home.php";'; // Change the action URL to your form processor URL
-                    // Add the form data as hidden input fields
-                   foreach ($form_data as $name => $value) {
-                     echo 'var input = document.createElement("input");';
-                     echo 'input.type = "hidden";';
-                     echo 'input.name = "' . $name . '";';
-                     echo 'input.value = "' . htmlspecialchars($value, ENT_QUOTES) . '";'; // Escape special characters
-                     echo 'form.appendChild(input);';
-                   }
-                    // Submit the form
-                     echo 'document.body.appendChild(form);';
-                     echo 'form.submit();';
-                     echo '</script>';
-
-                     exit(); // Exit to prevent further processing
+                 // and this will redrict the user to home page 
+                header("Location: home.php");
+               
 
 
             } else {
+
+
+              // if is condition is true it means that the user is not a existing user ,so  we 
+              // need to create a new table which stores all his data 
+
                 echo "Table does not exist";
                  $sql = "CREATE TABLE  `" . $email . "`  (id INT(100)  AUTO_INCREMENT PRIMARY KEY,
                     Title VARCHAR(100) NOT NULL,
                     Descriptions TEXT NOT NULL,
                     Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL )";
-                    $useremail=$email;
-                
+      
                 if (mysqli_query($conn, $sql)) {
-                  $form_data = array('email' => $email,'password' => $password );
-                  // Create a hidden form using JavaScript
-                     echo '<script>';
-                     echo 'var form = document.createElement("form");';
-                     echo 'form.style.display = "none";'; // Hide the form
-                     echo 'form.method = "post";';
-                     echo 'form.action = "home.php";'; // sending to home page
-                      //  the form data as hidden input fields
-                     foreach ($form_data as $name => $value) {
-                       echo 'var input = document.createElement("input");';
-                       echo 'input.type = "hidden";';
-                       echo 'input.name = "' . $name . '";';
-                       echo 'input.value = "' . htmlspecialchars($value, ENT_QUOTES) . '";'; // Escapeing special characters
-                       echo 'form.appendChild(input);';
-                     }
-                      // Submit the form
-                       echo 'document.body.appendChild(form);';
-                       echo 'form.submit();';
-                       echo '</script>';
-  
-                       exit(); // Exiting to prevent further processing
+                  //this displays if new table created
+                 // echo " New Table is created"
+
+                // so now the user need to redirect to the home page
+                 header("Location: home.php");
 
                 } else {
-                    echo "Error creating table: " . mysqli_error($conn);
-                }
-            }
 
-            
+                  // if this condiction is true it means that error occured while creating a table
+                    echo "Error creating table: " . mysqli_error($conn);}}
+
+
+
+
         } else {
+
+          // if this true it means the user entered incorrect email and password 
             echo "<h1>YOU HAVE ENTERED INCORRECT LOGIN DETAILS TRY AGAIN </h1>";
         }
     }
