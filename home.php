@@ -1,13 +1,27 @@
 
-
-
-
-
-
-
 <?php
 // connecting to the DB
 include 'db_connect.php';
+ 
+
+
+// checking which user is using and creating storing each user data seprate
+$sql = "SELECT Email FROM activeusers ORDER BY id DESC LIMIT 1";
+$result = mysqli_query($conn, $sql);
+
+// Check if any rows were returned
+if (mysqli_num_rows($result) > 0) {
+    // Output the value of the specified column from the last row
+    $activeuser = mysqli_fetch_array($result)[0];
+    $email=$activeuser;
+    //echo "The value of the last row in the specified column is: " . $email;
+} else {
+    echo "No rows were returned.";
+}
+
+// Close the database connection
+
+
  
 ?>
 
@@ -17,45 +31,7 @@ include 'db_connect.php';
 
 
 
-
-<?php
-// collecting email and password 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['email']) &&  $_POST['password']) {
-        $email= mysqli_real_escape_string($conn, $_POST['emai']);
-        $password = mysqli_real_escape_string($conn, $_POST['password']);
-        echo "<h1>Notes </h1>";
-      } 
-}
-
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
 
 <?php
@@ -74,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>";
         } else {
           // Insert the data 
-          $sql = "INSERT INTO Notes  (`Title`, `Descriptions`) 
+          $sql = "INSERT INTO `$email` (`Title`, `Descriptions`) 
           VALUES ('$Title' ,'$Descriptions')";
         
           if (mysqli_query($conn, $sql)) {
@@ -101,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['Delete'])) {   
     $id1 = $_POST['Delete'];
       // delete record from database
-      $sql1 = "DELETE FROM Notes  WHERE id=$id1";
+      $sql1 = "DELETE FROM `$email` WHERE id=$id1";
       if (mysqli_query($conn, $sql1)) {
         echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
         <strong>Success!</strong> You have successfully Deleted the note.
@@ -159,19 +135,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
 <div class="container-fluid">
-<a class="navbar-brand" href="#">Navbar</a>
+<a class="navbar-brand" href="#">Welcome to </a>
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
     aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
 </button>
+<a class="navbar-brand" href="#">Notebook !!</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+    aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<a class="navbar-brand" href="#">ACTIVE USER :<?php echo $email?></a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+    aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
+
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link active" aria-current="page" href="login.php">Logout</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -186,9 +175,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </li>
                 <li><a class="dropdown-item" href="#">Something else here</a></li>
             </ul>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
         </li>
     </ul>
     <form class="d-flex" role="search">
@@ -245,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </thead>
     <tbody>
     <?php 
-      $sql = "SELECT * FROM Notes ";
+      $sql = "SELECT * FROM `$email` ";
       $result = mysqli_query($conn, $sql);
       $sno=0;
       while($row = mysqli_fetch_assoc($result)) {
@@ -282,7 +268,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
-
-
-
-

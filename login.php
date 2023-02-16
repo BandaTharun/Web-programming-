@@ -1,22 +1,15 @@
 
 
 <?php
+
+
+
+
+
+
+
 // Check if condition is true
 
-  // Collect form data
-  $form_data = array(
-    'name' => $_POST['name'],
-    'email' => $_POST['email'],
-    'message' => $_POST['message']);
-
-  // Send form data to desired page using POST method
-  $url = "Location: chk.php" ;
-  $curl = curl_init($url);
-  curl_setopt($curl, CURLOPT_POST, true);
-  curl_setopt($curl, CURLOPT_POSTFIELDS, $form_data);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-  $response = curl_exec($curl);
-  curl_close($curl);
 
 
 
@@ -61,19 +54,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (mysqli_num_rows($result) > 0) {
             //echo "Access granted.";
-
+            // inserting user email id into  the data base to know which user is using 
+            $useremail=$email;
+            $sql5 = "INSERT INTO activeusers (`Email`) 
+            VALUES ('$useremail')";
+            mysqli_query($conn, $sql5);
             $sql = "SELECT * FROM information_schema.tables WHERE table_schema = 'mydb8' AND table_name = '$email' ";  
       
             $result = mysqli_query($conn, $sql);
             if (mysqli_num_rows($result) > 0) {
                 echo "Table exists";
                 $form_data = array('email' => $email,'password' => $password );
+
+                
+
+
+
                 // Create a hidden form using JavaScript
                    echo '<script>';
                    echo 'var form = document.createElement("form");';
                    echo 'form.style.display = "none";'; // Hide the form
                    echo 'form.method = "post";';
-                   echo 'form.action = "chk.php";'; // Change the action URL to your form processor URL
+                   echo 'form.action = "home.php";'; // Change the action URL to your form processor URL
                     // Add the form data as hidden input fields
                    foreach ($form_data as $name => $value) {
                      echo 'var input = document.createElement("input");';
@@ -92,10 +94,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             } else {
                 echo "Table does not exist";
-                 $sql = "CREATE TABLE  `" . $email . "`  (id INT(100) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                 $sql = "CREATE TABLE  `" . $email . "`  (id INT(100)  AUTO_INCREMENT PRIMARY KEY,
                     Title VARCHAR(100) NOT NULL,
-                    Descriptions VARCHAR(100) NOT NULL,
-                    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)";
+                    Descriptions TEXT NOT NULL,
+                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL )";
+                    $useremail=$email;
                 
                 if (mysqli_query($conn, $sql)) {
                   $form_data = array('email' => $email,'password' => $password );
@@ -104,13 +107,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                      echo 'var form = document.createElement("form");';
                      echo 'form.style.display = "none";'; // Hide the form
                      echo 'form.method = "post";';
-                     echo 'form.action = "chk.php";'; // Change the action URL to your form processor URL
-                      // Add the form data as hidden input fields
+                     echo 'form.action = "home.php";'; // sending to home page
+                      //  the form data as hidden input fields
                      foreach ($form_data as $name => $value) {
                        echo 'var input = document.createElement("input");';
                        echo 'input.type = "hidden";';
                        echo 'input.name = "' . $name . '";';
-                       echo 'input.value = "' . htmlspecialchars($value, ENT_QUOTES) . '";'; // Escape special characters
+                       echo 'input.value = "' . htmlspecialchars($value, ENT_QUOTES) . '";'; // Escapeing special characters
                        echo 'form.appendChild(input);';
                      }
                       // Submit the form
@@ -118,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                        echo 'form.submit();';
                        echo '</script>';
   
-                       exit(); // Exit to prevent further processing
+                       exit(); // Exiting to prevent further processing
 
                 } else {
                     echo "Error creating table: " . mysqli_error($conn);
