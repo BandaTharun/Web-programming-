@@ -5,22 +5,24 @@ include 'db_connect.php';
  
 
 
-// checking which user is using and creating storing each user data seprate
+// to know  which user is the present active user , so that i can storing his  data in his data table 
 $sql = "SELECT Email FROM activeusers ORDER BY id DESC LIMIT 1";
 $result = mysqli_query($conn, $sql);
 
 // Check if any rows were returned
 if (mysqli_num_rows($result) > 0) {
-    // Output the value of the specified column from the last row
+  
+    // this gives the  email of activeuser who have logined very latest . 
+    // and we can use this email to do all the operations 
     $activeuser = mysqli_fetch_array($result)[0];
     $email=$activeuser;
-    //echo "The value of the last row in the specified column is: " . $email;
+    
+
 } else {
+
+  // is is when their is no active user username stored in the database
     echo "No rows were returned.";
 }
-
-// Close the database connection
-
 
  
 ?>
@@ -30,37 +32,45 @@ if (mysqli_num_rows($result) > 0) {
 
 
 
-
-        
-
-
 <?php
-// collecting the note data and storing in the database 
+// collecting the user data and storing in the database 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['Title']) or  $_POST['Descriptions']) {
-        // Do something with name1
         $Title = mysqli_real_escape_string($conn, $_POST['Title']);
         $Descriptions = mysqli_real_escape_string($conn, $_POST['Descriptions']);
         
         if (empty($Title) || empty($Descriptions))  {
-          //echo "The Title and Descriptions fields are required and need to be filled out completely.";
+
+
+          //if the user donot give both the inputs will be be displayed 
+          // "The Title and Descriptions fields are required and need to be filled out completely.";
           echo "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
           <strong>Error!</strong> The Title and Descriptions fields are required.
           <button type='button' class='btn-close' data-dismiss='alert' aria-label='Close'></button>
           </div>";
+
         } else {
-          // Insert the data 
+
+          // if both the inputs are given , this upload the data in the database
           $sql = "INSERT INTO `$email` (`Title`, `Descriptions`) 
           VALUES ('$Title' ,'$Descriptions')";
+
         
           if (mysqli_query($conn, $sql)) {
+
+            // this is true it means the the data been upload into the database sucessfully
             //echo "<h1>You have successfully added the note.</h1>";
             echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
             <strong>Success!</strong> You have successfully added the note.
             <button type='button' class='btn-close' data-dismiss='alert' aria-label='Close'></button>
             </div>";
+
+
           } else {
+            
+             // this is true it means the the data been not  upload into the database 
             echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+
           }
         }
     } 
@@ -71,20 +81,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
+
+
+
 <?php 
-// deleteting the selected data from the user database
+
+
+// deleteting the user selected data from his data table in  database.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+
+  //  collecting  if  user request i is to delete the data .
+
     if (isset($_POST['Delete'])) {   
-    $id1 = $_POST['Delete'];
+        $id1 = $_POST['Delete'];
+
+    // if this true the user want to delete the spefic id 
       // delete record from database
       $sql1 = "DELETE FROM `$email` WHERE id=$id1";
+
+
       if (mysqli_query($conn, $sql1)) {
+
+        // this displays if the spefied data by user is sucessfully deleted 
         echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
         <strong>Success!</strong> You have successfully Deleted the note.
         <button type='button' class='btn-close' data-dismiss='alert' aria-label='Close'></button>
         </div>";
+
+
       } else {
+
+      // this displays if the their is any error while deleting the user spefied data 
         echo "Error deleting record: " . mysqli_error($conn);
+
+      
       }
   }
 }
@@ -218,6 +249,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
+
+
 <!-- creating the  table to display the all the Notes added in the database -->
 <div class="container" my-3>
   <table class="table" id="myTable">
@@ -252,19 +285,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </tbody>
   </table>
 </div>
-<hr>
-    
-</div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
-        integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous">
-    </script>
-    
+<hr>   
+</div> 
 </body>
 
 </html>

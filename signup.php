@@ -6,7 +6,7 @@ include 'db_connect.php';
 
 
 
-// collecting  form data using $_POST
+// collecting  user form  data using $_POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
  // collect value of input field
   
@@ -19,18 +19,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
  
  
-// checking the form data
+// checking the user form  data if every input is filld or not . 
 
 if (empty($firstname) || empty($lastname) || empty($mobilenumber) || empty($email) || empty($password)) {
- // echo "the form is not filled out completely";
+// if this condiction is true it means that user form data is incomplete
+  //echo "the form is not filled out completely";
+
 } else {
-  // insert the data 
+
+  // if this condiction is true it means that 
+  // the user form is is completely filled and now we need to store this data in database
   $sql = "INSERT INTO users (`firstname`, `lastname`, `mobilenumber`, `email`, `password`) 
   VALUES ('$firstname' ,'$lastname', '$mobilenumber' ,'$email' ,'$password')";
 
   if (mysqli_query($conn, $sql)) {
-    echo "<h1>You have  successfully created your account  <a href='login.php' style='color:dodgerblue'>click here  </a> to login.</h1>";
+
+    // this will display if the dta is sucessfully stored in the database
+    echo "<h1>You have  successfully created your account 
+     <a href='login.php' style='color:dodgerblue'>click here  </a> to login.</h1>";
+
   } else {
+
+    // this will show up if the their is a problum in storing user data into data base
     echo "Error: " . $sql . "<br>" . mysqli_error($conn);
   }
   
@@ -38,6 +48,8 @@ if (empty($firstname) || empty($lastname) || empty($mobilenumber) || empty($emai
 }
 
 ?>
+
+
 
 
 
@@ -100,11 +112,6 @@ if (empty($firstname) || empty($lastname) || empty($mobilenumber) || empty($emai
       </div>  
     </div>
   </form>
-
-
-
-
-
 </body>
 </html>
 
