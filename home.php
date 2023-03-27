@@ -241,7 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <label for="floatingTextarea2">Comments</label>
               </div>
           </div>
-          <button type="submit" class="btn btn-primary" >ADD NOTE</button>
+          <button type="submit" class="btn btn-primary" >SAVE NOTE</button>
 </form>
 </div>
 

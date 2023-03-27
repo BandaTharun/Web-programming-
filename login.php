@@ -16,13 +16,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
       // checking if the eamil and password  exist in the database 
 
+        //$hash = password_hash($password,PASSWORD_BCRYPT);
+        //$sql = "SELECT * FROM users WHERE email = '$email' AND password = '$hash'";
+        //$result = mysqli_query($conn, $sql);
 
-        $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
-        $result = mysqli_query($conn, $sql);
+        
+        $data = "SELECT password FROM users WHERE email = '$email'";
+        $result1 = mysqli_query($conn, $data);
+        $stored_hash = mysqli_fetch_assoc($result1)['password'];
+        
+        // Hash the password entered by the user
+        //$entered_password_hash = password_hash($password, PASSWORD_BCRYPT);
+        
+        // Compare the hashes
+        if (password_verify($password, $stored_hash)) {
+        
+          // Password is correct
 
-        if (mysqli_num_rows($result) > 0) {
-
-
+      
             // if this is true , it means that the user is having the accocunt the in the database
 
             //echo "Access granted.";
@@ -96,16 +107,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -121,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  <form action="<?php echo $_SERVER['PHP_SELF'];?>"  method="post" style="border:1px solid #ccc" >
    <div class="container">
      <h1> Welcome Back !! Login  And  Start Using. </h1>
-     <p>Fill and start using .</p>
+     <p>Fill Details</Details> .</p>
    
        <label for="email"><b>Email</b></label>
        <div class="allinput">
@@ -133,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          <input type="password" placeholder="Enter Password" name="password" required>
        </div>
        
-       <p>Signup to create accocunt <a href="Signup.php" style="color:dodgerblue">CLICK HERE </a>.</p>
+       <p>Signup to create account <a href="Signup.php" style="color:dodgerblue">CLICK HERE </a>.</p>
 
        <div class="clearfix">
          <button type="submit" class="signupbtn" >Login </button>
