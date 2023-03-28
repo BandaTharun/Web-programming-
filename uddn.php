@@ -1,3 +1,4 @@
+
 <?php
 // connecting to the DB
 include 'db_connect.php';
@@ -9,30 +10,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // checking the email and password are given are not 
     if (empty($email) || empty($password))  {
-       // echo "The email and password is not filled out completely.";
+        //echo "The email and password is not filled out completely.";
     } else {
 
-      echo "The email and password is not filled out completely.";
+
       // checking if the eamil and password  exist in the database 
 
-        //$hash = password_hash($password,PASSWORD_BCRYPT);
-        //$sql = "SELECT * FROM users WHERE email = '$email' AND password = '$hash'";
-        //$result = mysqli_query($conn, $sql);
-
-        
-        $data = "SELECT password FROM users WHERE email = '$email'";
-        $result1 = mysqli_query($conn, $data);
-        $stored_hash = mysqli_fetch_assoc($result1)['password'];
-        
-        // Hash the password entered by the user
-        $entered_password_hash = password_hash($password, PASSWORD_BCRYPT);
-        
-        // Compare the hashes
-        if (password_verify($password, $stored_hash)) {
-        
-          // Password is correct
-
+      $databasepassword = "SELECT password FROM users WHERE email = '$email'";
+      $result1 = mysqli_query($conn, $databasepassword);
+      $stored_hash = mysqli_fetch_assoc($result1)['password'];
       
+      // Hash the password entered by the user
+      //$entered_password_hash = password_hash($password, PASSWORD_BCRYPT);
+      
+      // Compare the hashes
+      if (password_verify($password, $stored_hash)) {
+
             // if this is true , it means that the user is having the accocunt the in the database
 
             //echo "Access granted.";
@@ -46,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sql5 = "INSERT INTO activeusers (`Email`) 
             VALUES ('$activeuser')";
             mysqli_query($conn, $sql5);
+
 
 
             // now i  want to know if the user is existing user or new user who just has been created the accocunt 
@@ -99,7 +93,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+
 ?>
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -120,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
  <form action="<?php echo $_SERVER['PHP_SELF'];?>"  method="post" style="border:1px solid #ccc" >
    <div class="container">
      <h1> Welcome Back !! Login  And  Start Using. </h1>
-     <p>Fill Details</Details> .</p>
+     <p>Fill and start using .</p>
    
        <label for="email"><b>Email</b></label>
        <div class="allinput">
@@ -132,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          <input type="password" placeholder="Enter Password" name="password" required>
        </div>
        
-       <p>Signup to create account <a href="Signup.php" style="color:dodgerblue">CLICK HERE </a>.</p>
+       <p>Signup to create accocunt <a href="Signup.php" style="color:dodgerblue">CLICK HERE </a>.</p>
 
        <div class="clearfix">
          <button type="submit" class="signupbtn" >Login </button>

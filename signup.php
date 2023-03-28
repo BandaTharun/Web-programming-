@@ -1,4 +1,3 @@
-
 <?php
 // connecting to the DB
 include 'db_connect.php';
@@ -134,6 +133,7 @@ if (empty($firstname) || empty($lastname) || empty($mobilenumber) || empty($emai
   </form>
 </body>
 </html>
+
 
 
 
