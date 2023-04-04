@@ -1,12 +1,12 @@
 
 <?php
+
 // connecting to the DB
 include 'db_connect.php';
  
 
-
 // to know  which user is the present active user , so that i can storing his  data in his data table 
-$sql = "SELECT Email FROM activeusers ORDER BY id DESC LIMIT 1";
+$sql = "SELECT Email FROM Recent_activeusers ORDER BY id DESC LIMIT 1";
 $result = mysqli_query($conn, $sql);
 
 // Check if any rows were returned
@@ -23,16 +23,14 @@ if (mysqli_num_rows($result) > 0) {
   // is is when their is no active user username stored in the database
     echo "No rows were returned.";
 }
-
  
 ?>
 
 
 
 
-
-
 <?php
+
 // collecting the user data and storing in the database 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['Title']) or  $_POST['Descriptions']) {
@@ -40,7 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $Descriptions = mysqli_real_escape_string($conn, $_POST['Descriptions']);
         
         if (empty($Title) || empty($Descriptions))  {
-
 
           //if the user donot give both the inputs will be be displayed 
           // "The Title and Descriptions fields are required and need to be filled out completely.";
@@ -51,9 +48,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         } else {
 
-          // if both the inputs are given , this upload the data in the database
-          $sql = "INSERT INTO `$email` (`Title`, `Descriptions`) 
-          VALUES ('$Title' ,'$Descriptions')";
+          // if both the inputs are given , this will upload the data in the database
+
+          $usertableid = "SELECT id FROM users WHERE `email`='$email'";
+          $result111 = mysqli_query($conn, $usertableid);
+          $userid1 = mysqli_fetch_array($result111)[0];
+          $sql = "INSERT INTO USERS_NOTEBOOK_DATA (`user_id`,`email`,`Title`,`Descriptions`) 
+          VALUES ('$userid1','$email', '$Title' ,'$Descriptions')";
 
         
           if (mysqli_query($conn, $sql)) {
@@ -64,7 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <strong>Success!</strong> You have successfully added the note.
             <button type='button' class='btn-close' data-dismiss='alert' aria-label='Close'></button>
             </div>";
-
 
           } else {
             
@@ -84,8 +84,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-<?php 
 
+<?php 
 
 // deleteting the user selected data from his data table in  database.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -98,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // if this true the user want to delete the spefic id 
       // delete record from database
-      $sql1 = "DELETE FROM `$email` WHERE id=$id1";
+      $sql1 = "DELETE FROM USERS_NOTEBOOK_DATA  WHERE id=$id1";
 
 
       if (mysqli_query($conn, $sql1)) {
@@ -115,14 +115,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       // this displays if the their is any error while deleting the user spefied data 
         echo "Error deleting record: " . mysqli_error($conn);
 
-      
       }
   }
 }
   
-  // close database connection
- 
+// close database connection 
  ?>
+
+
+
+
+
+
+
+
+<?php 
+
+// updating the user selected data from his data table in  database.
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+
+  //  collecting  if  user request i is to update the data .
+
+    if (isset($_POST['updatetext']) or isset($_POST['updateid'])) {   
+        $uptext = $_POST['updatetext'];
+        $upid = $_POST['updateid'];
+
+
+
+    // if this true the user want to delete the spefic id 
+      // delete record from database
+      $sql1 = " UPDATE USERS_NOTEBOOK_DATA  SET Descriptions='$uptext'  WHERE id=$upid";
+
+
+      if (mysqli_query($conn, $sql1)) {
+
+        // this displays if the spefied data by user is sucessfully deleted 
+        echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+        <strong>Success!</strong> You have successfully Deleted the note.
+        <button type='button' class='btn-close' data-dismiss='alert' aria-label='Close'></button>
+        </div>";
+
+
+      } else {
+
+      // this displays if the their is any error while deleting the user spefied data 
+        echo "Error deleting record: " . mysqli_error($conn);
+
+      }
+  }
+}
+  
+// close database connection 
+ ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -152,11 +210,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     });
     
     </script>
+
+
+
+
     <style>
         #get {color:white;
         background-color: orangered;}
     </style>
-
+    <style>
+        #get2 {color:white;
+        background-color: green;}
+    </style>
     
 
 </head>
@@ -222,6 +287,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
+
+
+
+
+
 <!-- creating the  note -->
 <div class="continer " style="margin: 2%;">
 <h2>Add a Note</h2>
@@ -241,11 +311,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <label for="floatingTextarea2">Comments</label>
               </div>
           </div>
-          <button type="submit" class="btn btn-primary" >SAVE NOTE</button>
+          <button type="submit"  class="btn btn-primary" >SAVE NOTE</button>
 </form>
 </div>
 
     <br>
+
+
+
+
 
 
 
@@ -259,12 +333,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <th scope="col">S.No</th>
         <th scope="col">Title</th>
         <th scope="col">Descriptions</th>
-        <th scope="col">Actions</th>
+        <th scope="col">Actions1</th>
+        <th scope="col">Actions2</th>
       </tr>
     </thead>
     <tbody>
     <?php 
-      $sql = "SELECT * FROM `$email` ";
+      $sql = "SELECT * FROM USERS_NOTEBOOK_DATA WHERE `email`='$email'";
+    
       $result = mysqli_query($conn, $sql);
       $sno=0;
       while($row = mysqli_fetch_assoc($result)) {
@@ -273,15 +349,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <th scope='row'>".$sno."</th>
           <td>".$row['Title']."</td>
           <td>".$row['Descriptions']."</td>
+    
+          <td>
+          </form>
+          <form method='post' action='home.php'id ='myForm' >
+          <input type='text'  name='updatetext' value=''>
+          <input type='hidden'  name='updateid' value='".$row['id']."'>
+          <button type='submit'  id='get2' >Update</button>
+          </form>
+          </td>
+
           <td>
           <form method='post' action='home.php' >
-          <input type='hidden' name='Delete' value='".$row['id']."'>
+          <input type='hidden'  name='Delete' value='".$row['id']."'>
           <button type='submit' id='get'>Delete</button>
           </form>
           </td>
         </tr>";
       }     
     ?>
+
+    
     </tbody>
   </table>
 </div>

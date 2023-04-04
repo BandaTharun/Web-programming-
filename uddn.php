@@ -80,10 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
 
                   // if this condiction is true it means that error occured while creating a table
-                    echo "Error creating table: " . mysqli_error($conn);}}
-
-
-
+                     echo "Error creating table: " . mysqli_error($conn);}}
 
         } else {
 
@@ -95,14 +92,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 ?>
-
-
-
-
-
-
-
-
 
 
 

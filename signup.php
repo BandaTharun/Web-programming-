@@ -56,9 +56,6 @@ if (empty($firstname) || empty($lastname) || empty($mobilenumber) || empty($emai
 
 
 
-
-
-
 <!DOCTYPE html>
 <html>
 <head>

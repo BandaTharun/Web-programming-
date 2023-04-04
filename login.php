@@ -9,97 +9,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // checking the email and password are given are not 
     if (empty($email) || empty($password))  {
-       // echo "The email and password is not filled out completely.";
-    } else {
-
       echo "The email and password is not filled out completely.";
-      // checking if the eamil and password  exist in the database 
-
-        //$hash = password_hash($password,PASSWORD_BCRYPT);
-        //$sql = "SELECT * FROM users WHERE email = '$email' AND password = '$hash'";
-        //$result = mysqli_query($conn, $sql);
-
+    } else {
         
-        $data = "SELECT password FROM users WHERE email = '$email'";
+        $data = "SELECT password FROM users WHERE email ='$email' ";
         $result1 = mysqli_query($conn, $data);
         $stored_hash = mysqli_fetch_assoc($result1)['password'];
         
-        // Hash the password entered by the user
+
         $entered_password_hash = password_hash($password, PASSWORD_BCRYPT);
         
-        // Compare the hashes
-        if (password_verify($password, $stored_hash)) {
-        
-          // Password is correct
+      }
 
-      
-            // if this is true , it means that the user is having the accocunt the in the database
-
-            //echo "Access granted.";
-
-            //  to know who is the present user using the notebook 
-            // i want the user email to be stored in  table called activeusers table , and this help a find the 
-            // user table to retrive the old data and to upload new data
-
-
+    if (password_verify($password, $stored_hash)) {
             $activeuser=$email;
-            $sql5 = "INSERT INTO activeusers (`Email`) 
+            $sql5 = "INSERT INTO Recent_activeusers (`Email`) 
             VALUES ('$activeuser')";
             mysqli_query($conn, $sql5);
-
-
-            // now i  want to know if the user is existing user or new user who just has been created the accocunt 
-            
-            // this condiction return if user data has been stored previously 
-
-            $sql = "SELECT * FROM information_schema.tables WHERE table_schema = 'mydb8' AND table_name = '$email' ";  
-            $result = mysqli_query($conn, $sql);
-            if (mysqli_num_rows($result) > 0) {
-
-              // if this condiction is true it means that the user is existing user 
-                echo "Table exists";
-
-                 // and this will redrict the user to home page 
-                header("Location: home.php");
-               
-
-
-            } else {
-
-
-              // if is condition is true it means that the user is not a existing user ,so  we 
-              // need to create a new table which stores all his data 
-
-                echo "Table does not exist";
-                 $sql = "CREATE TABLE  `" . $email . "`  (id INT(100)  AUTO_INCREMENT PRIMARY KEY,
-                    Title VARCHAR(100) NOT NULL,
-                    Descriptions TEXT NOT NULL,
-                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL )";
       
-                if (mysqli_query($conn, $sql)) {
-                  //this displays if new table created
-                 // echo " New Table is created"
+                header("Location: home.php");
 
-                // so now the user need to redirect to the home page
-                 header("Location: home.php");
-
-                } else {
-
-                  // if this condiction is true it means that error occured while creating a table
-                    echo "Error creating table: " . mysqli_error($conn);}}
-
-
-
-
-        } else {
+               } else {
 
           // if this true it means the user entered incorrect email and password 
             echo "<h1>YOU HAVE ENTERED INCORRECT LOGIN DETAILS TRY AGAIN </h1>";
         }
-    }
-}
+      }
 
 ?>
+
+
+
+
+
+
 
 
 
@@ -113,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <style>
  
 </style>
-
+<script src="validate.js"></script>
 </head>
 <body>
 
@@ -129,9 +72,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
        <label for="psw"><b>Password</b></label>
        <div class="allinput">
-         <input type="password" placeholder="Enter Password" name="password" required>
+       <input type="password" placeholder="Enter Password" id="password"  name="password" onkeyup="validatePassword()" required>
        </div>
-       
+
+       <div id="password-error" style="display: none; color: blue;"></div>
        <p>Signup to create account <a href="Signup.php" style="color:dodgerblue">CLICK HERE </a>.</p>
 
        <div class="clearfix">
@@ -139,7 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        </div>
      </div>  
    </div>
- </form>
-
+  </form>
 </body>
 </html>

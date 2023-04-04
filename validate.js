@@ -1,3 +1,5 @@
+
+
 // validation for Password
 
 		function validatePassword() {
@@ -19,6 +21,7 @@
 				passwordError.style.display = "none";
 			}
 		}
+
 
 // validation for email
 

@@ -1,12 +1,16 @@
 
 <?php
+
 // connecting to the DB
 include 'db_connect.php';
- 
+
 ?>
 
 
+
+
 <?php
+
 // Create table
 $email = "user@gamail.com";
 $sql = "CREATE TABLE  `" . $email . "`  (
@@ -20,5 +24,6 @@ if (mysqli_query($conn, $sql)) {
 } else {
     echo "Error creating table: " . mysqli_error($conn);
 }
+
 ?>
 
