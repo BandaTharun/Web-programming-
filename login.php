@@ -1,6 +1,7 @@
 <?php
 // connecting to the DB
 include 'db_connect.php';
+session_start();
 
 // collecting user email and passwoed  using $_POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -26,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sql5 = "INSERT INTO Recent_activeusers (`Email`) 
             VALUES ('$activeuser')";
             mysqli_query($conn, $sql5);
-      
+            $_SESSION['id']=$email;
                 header("Location: home.php");
 
                } else {

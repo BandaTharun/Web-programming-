@@ -3,27 +3,21 @@
 
 // connecting to the DB
 include 'db_connect.php';
- 
 
-// to know  which user is the present active user , so that i can storing his  data in his data table 
-$sql = "SELECT Email FROM Recent_activeusers ORDER BY id DESC LIMIT 1";
-$result = mysqli_query($conn, $sql);
+// extracting the email stored in the session
+session_start();
+if(isset($_SESSION['id']))
+{
+  $email=$_SESSION['id'];
 
-// Check if any rows were returned
-if (mysqli_num_rows($result) > 0) {
   
-    // this gives the  email of activeuser who have logined very latest . 
-    // and we can use this email to do all the operations 
-    $activeuser = mysqli_fetch_array($result)[0];
-    $email=$activeuser;
-    
-
-} else {
-
-  // is is when their is no active user username stored in the database
-    echo "No rows were returned.";
 }
- 
+else
+{
+header("Location:logout1.php");
+}
+
+
 ?>
 
 
@@ -256,7 +250,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="login.php">Logout</a>
+            <a class="nav-link active" aria-current="page" href="logout_session.php">Logout</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
