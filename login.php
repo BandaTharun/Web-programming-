@@ -4,7 +4,7 @@
 
 
 <?php
-// connecting to the DB, tharun reddy is the hero 
+// connecting to the DB, tharun reddy is the hero , he can do anything 
 include 'db_connect.php';
 session_start();
 
