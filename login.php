@@ -1,5 +1,10 @@
+
+
+
+
+
 <?php
-// connecting to the DB
+// connecting to the DB, tharun reddy is the hero 
 include 'db_connect.php';
 session_start();
 
